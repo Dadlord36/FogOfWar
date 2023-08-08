@@ -1,0 +1,4 @@
+﻿#pragma once
+
+DISCOVERABLEACTORS_SHARED_API DECLARE_LOG_CATEGORY_EXTERN(LogDiscoverableActors, Log, All);
+

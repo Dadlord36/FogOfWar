@@ -25,7 +25,7 @@ public:
 	UFUNCTION(CallInEditor, Category = "Debug")
 	void ClearSpawnedActors();
 
-	UFUNCTION(CallInEditor, Category = "Debug")
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Debug")
 	void ApplyColorToGroup() const;
 
 private:

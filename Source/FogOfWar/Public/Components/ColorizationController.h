@@ -17,7 +17,8 @@ public:
 	UColorizationController();
 	
 	virtual void OnRegister() override;
-	void ApplyColorToOwnerMesh(const FLinearColor& InColor) const;
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void ApplyColorToOwnerMesh(const FLinearColor InColor) const;
 	
 protected:
 	// Called when the game starts

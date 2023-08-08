@@ -3,25 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actors/DiscoverableActor.h"
 #include "GameFramework/Actor.h"
 #include "BattleUnit.generated.h"
 
 class UColorizationController;
 
 UCLASS()
-class FOGOFWAR_API ABattleUnit : public AActor
+class FOGOFWAR_API ABattleUnit : public ADiscoverableActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
 	ABattleUnit();
-	
-	
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Components")

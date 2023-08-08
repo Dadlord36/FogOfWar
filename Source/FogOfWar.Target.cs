@@ -11,5 +11,7 @@ public class FogOfWarTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 		ExtraModuleNames.Add("FogOfWar");
+
+		DisablePlugins.Add("DiscoverableActors_ServerExpansion");
 	}
 }

@@ -23,8 +23,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	//This function can be called with actor inspector button
-	UFUNCTION(CallInEditor, Category = "Debug")
-	void RespawnActorsInGridFormation() const;
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Debug")
+	void RespawnActorsInGridFormation(TArray<AActor*>& OutArray) const;
 	virtual void OnRegister() override;
 
 private:
@@ -37,8 +37,9 @@ private:
 	/**
 	 * @brief Spawn actors at specified locations.
 	 * @param SpawnLocations Locations to spawn actors at.
+	 * @return Spawned actors.
 	 */
-	void SpawnActors(const TArray<FVector>& SpawnLocations) const;
+	TArray<TObjectPtr<AActor>> SpawnActors(const TArray<FVector>& SpawnLocations) const;
 
 	TObjectPtr<UActorsGroupManager> GetActorsGroupManager() const;
 
@@ -49,8 +50,7 @@ private:
 	float CellsDistance = 100.f;
 	UPROPERTY(EditAnywhere, Category = "Parameters")
 	FIntVector2 GridSize;
-	
+
 	UPROPERTY(Transient)
 	TObjectPtr<UActorsGroupManager> GroupManager;
-	
 };

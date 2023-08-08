@@ -20,7 +20,20 @@
 		},
 		{
 			"Name": "DiscoverableActors",
-			"Enabled": true
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor",
+				"Game",
+				"Server"
+			]
+		},
+		{
+			"Name" : "GameplayMessages",
+			"Enabled" : true
+		},
+		{
+			"Name" : "ModularGameplay",
+			"Enabled" : true
 		}
 	]
 }

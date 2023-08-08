@@ -15,9 +15,3 @@ ABattleUnit::ABattleUnit()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	ColorizationController = CreateDefaultSubobject<UColorizationController>(TEXT("ColorizationController"));
 }
-
-// Called when the game starts or when spawned
-void ABattleUnit::BeginPlay()
-{
-	Super::BeginPlay();
-}

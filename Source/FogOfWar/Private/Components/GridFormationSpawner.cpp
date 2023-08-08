@@ -25,7 +25,7 @@ void UGridFormationSpawner::BeginPlay()
 	// ...
 }
 
-void UGridFormationSpawner::RespawnActorsInGridFormation() const
+void UGridFormationSpawner::RespawnActorsInGridFormation(TArray<AActor*>& OutArray) const
 {
 	if (!ensureAlwaysMsgf(GroupManager, TEXT("GroupManager is not valid, check if ActorsGroupManager component is attached to owner")))
 	{
@@ -34,7 +34,12 @@ void UGridFormationSpawner::RespawnActorsInGridFormation() const
 
 	GroupManager->ClearSpawnedActors();
 	const auto SpawnLocations = FormSpawnLocations();
-	SpawnActors(SpawnLocations);
+	auto Result = SpawnActors(SpawnLocations);
+	OutArray.Empty(Result.Num());
+	for (auto& Actor : Result)
+	{
+		OutArray.Add(Actor.Get());
+	}
 }
 
 void UGridFormationSpawner::OnRegister()
@@ -75,20 +80,21 @@ TArray<FVector> UGridFormationSpawner::FormSpawnLocations() const
 	return SpawnLocations;
 }
 
-void UGridFormationSpawner::SpawnActors(const TArray<FVector>& SpawnLocations) const
+TArray<TObjectPtr<AActor>> UGridFormationSpawner::SpawnActors(const TArray<FVector>& SpawnLocations) const
 {
 	if (!ensureAlwaysMsgf(GroupManager, TEXT("GroupManager is not valid, check if ActorsGroupManager component is attached to owner")))
 	{
-		return;
+		return {};
+	}
+	
+	const auto Owner = GetOwner();
+	if (IsValid(Owner) == false)
+	{
+		return{};
 	}
 
 	TArray<TObjectPtr<AActor>> SpawnedActors;
 	SpawnedActors.Reserve(SpawnLocations.Num());
-	const auto Owner = GetOwner();
-	if (IsValid(Owner) == false)
-	{
-		return;
-	}
 
 	const auto ActorToSpawnClass = ActorToSpawn.LoadSynchronous();
 	const auto World = GetWorld();
@@ -104,6 +110,7 @@ void UGridFormationSpawner::SpawnActors(const TArray<FVector>& SpawnLocations) c
 		SpawnedActors.Add(SpawnedActor);
 	}
 	GroupManager->SetGroupActors(SpawnedActors);
+	return SpawnedActors;
 }
 
 TObjectPtr<UActorsGroupManager> UGridFormationSpawner::GetActorsGroupManager() const

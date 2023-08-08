@@ -3,31 +3,95 @@
 
 #include "Actors/DiscoverableActor.h"
 
+#include "LogCategoires.h"
+#if WITH_SERVER_CODE
+#include "Components/Interfaces/UnitIDManager.h"
+#include "Components/Interfaces/NetRelevancyDecider.h"
+#include "Subsystems/DiscoverableActorsSubsystem.h"
+#endif
 
-// Sets default values
-ADiscoverableActor::ADiscoverableActor()
+/*
+  If relevancy decider determines that this actor is relevant for the viewer - then we will use default relevancy check,
+  as it will check if actor is visible for player camera.
+ */
+#if WITH_SERVER_CODE
+ADiscoverableActor::ADiscoverableActor() : Super()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//Make replicated
+	bReplicates = true;
 }
 
 bool ADiscoverableActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
+	if (ensureMsgf(NetRelevancyDecider.GetObject() != nullptr, TEXT("NetRelevancyDecider is not set")) == false)
+	{
+		return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+	}
 
-	
-	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+	return INetRelevancyDecider::Execute_DetermineNetRelevancy(NetRelevancyDecider.GetObject(), RealViewer, this, SrcLocation)
+		       ? Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation)
+		       : false;
 }
+#endif
+
 
 // Called when the game starts or when spawned
 void ADiscoverableActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//if is client - do nothing
+	if (HasAuthority() == false)
+	{
+		return;
+	}
+
+#if WITH_SERVER_CODE
+	const auto DiscoverableActorsSubsystem = UDiscoverableActorsSubsystem::Get(this);
+	NetRelevancyDecider = DiscoverableActorsSubsystem->GetNetRelevancyDecider();
+#if DA_DEBUG
+	if (ensureAlwaysMsgf(NetRelevancyDecider, TEXT("NetRelevancyDecider is not set for %s"), *GetName()) == false)
+	{
+		UE_LOG(LogDiscoverableActors, Error, TEXT("NetRelevancyDecider is not set for %s"), *GetName());
+	}
+#endif
+	UnitIDManager = DiscoverableActorsSubsystem->GetUnitIDManager();
+	ClaimUnitID();
+#endif
 }
 
-// Called every frame
-void ADiscoverableActor::Tick(float DeltaTime)
+void ADiscoverableActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::Tick(DeltaTime);
+	if (HasAuthority() == false)
+	{
+		Super::EndPlay(EndPlayReason);
+		return;
+	}
+#if WITH_SERVER_CODE
+	ReleaseUnitID();
+#endif
+	Super::EndPlay(EndPlayReason);
 }
 
+#if WITH_SERVER_CODE
+void ADiscoverableActor::ClaimUnitID()
+{
+	if (UnitIDManager == nullptr)
+	{
+		UE_LOG(LogDiscoverableActors, Error, TEXT("UnitIDManager is not set for %s"), *GetName());
+		return;
+	}
+
+	UnitID = UnitIDManager->AssignUnitID();
+}
+
+void ADiscoverableActor::ReleaseUnitID() const
+{
+	if (UnitIDManager == nullptr)
+	{
+		UE_LOG(LogDiscoverableActors, Error, TEXT("UnitIDManager is not set for %s"), *GetName());
+		return;
+	}
+
+	UnitIDManager->ReleaseUnitID(UnitID);
+}
+#endif

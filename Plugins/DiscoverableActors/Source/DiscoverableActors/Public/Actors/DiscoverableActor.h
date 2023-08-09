@@ -22,14 +22,15 @@ class DISCOVERABLEACTORS_API ADiscoverableActor : public AActor, public IUnitIdP
 	GENERATED_BODY()
 
 public:
-	
 	ADiscoverableActor();
-	
+
 #if WITH_SERVER_CODE
 	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
+
 	virtual int GetUnitID() const override { return UnitID; }
+	void SetFallbackToDefaultRelevancy(const bool bInFallbackToDefaultRelevancy) { bFallbackToDefaultRelevancy = bInFallbackToDefaultRelevancy; }
 #endif
-	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,8 +45,11 @@ private:
 
 private:
 #if WITH_SERVER_CODE
+#pragma region Fileds
+	int32 bFallbackToDefaultRelevancy = 0;
+	int UnitID = -1;
 	TScriptInterface<INetRelevancyDecider> NetRelevancyDecider;
 	TScriptInterface<IUnitIDManager> UnitIDManager;
-	int UnitID = -1;
+#pragma endregion
 #endif
 };

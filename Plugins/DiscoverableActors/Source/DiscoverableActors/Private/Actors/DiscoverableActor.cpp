@@ -10,30 +10,35 @@
 #include "Subsystems/DiscoverableActorsSubsystem.h"
 #endif
 
-/*
-  If relevancy decider determines that this actor is relevant for the viewer - then we will use default relevancy check,
-  as it will check if actor is visible for player camera.
- */
-#if WITH_SERVER_CODE
+
 ADiscoverableActor::ADiscoverableActor() : Super()
 {
 	//Make replicated
 	bReplicates = true;
 }
 
+/*
+  If relevancy decider determines that this actor is relevant for the viewer - then we will use default relevancy check,
+  as it will check if actor is visible for player camera.
+ */
+#if WITH_SERVER_CODE
 bool ADiscoverableActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
+	if (bFallbackToDefaultRelevancy)
+	{
+		return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+	}
 	if (ensureMsgf(NetRelevancyDecider.GetObject() != nullptr, TEXT("NetRelevancyDecider is not set")) == false)
 	{
 		return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 	}
 
+	//TODO: Maybe be improved with enum that will allow to fallback to default relevancy check from NetRelevancyDecider result
 	return INetRelevancyDecider::Execute_DetermineNetRelevancy(NetRelevancyDecider.GetObject(), RealViewer, this, SrcLocation)
 		       ? Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation)
 		       : false;
 }
 #endif
-
 
 // Called when the game starts or when spawned
 void ADiscoverableActor::BeginPlay()

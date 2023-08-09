@@ -3,6 +3,7 @@
 
 #include "Subsystems/TeamingSubsystem_Server.h"
 
+#include "FogOfWarLogCategoires.h"
 #include "Subsystems/DiscoverableActorsSubsystem.h"
 
 void UTeamingSubsystem_Server::RegisterActorsToNextTeam(const TArray<AActor*> Actors)
@@ -13,7 +14,14 @@ void UTeamingSubsystem_Server::RegisterActorsToNextTeam(const TArray<AActor*> Ac
 
 void UTeamingSubsystem_Server::MakeBeTeamMateForNextTeam(APlayerController* PlayerController)
 {
-	MakeBeTeamMateFor(PlayerController, LastTeamToJoinNumber);
+	if(ensureAlwaysMsgf(PlayerController, TEXT("PlayerController is nullptr")) == false)
+	{
+		UE_LOG(LogFogOfWar, Error, TEXT("PlayerController is nullptr"));
+		return;
+	}
+	
+	MakeBeTeamMateFor(PlayerController, LastTeamToJoinNumber % 3);
+	
 	LastTeamToJoinNumber++;
 }
 

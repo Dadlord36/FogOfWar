@@ -33,5 +33,6 @@ private:
 	TMap<int, TArray<TObjectPtr<AActor>>> TeamToActorsMap;
 
 	int TeamsNumber = 0;
-	int LastTeamToJoinNumber = 0;
+	int LastTeamToJoinNumber = 1;
+	int32 PlayersPerTeam = 2;
 };

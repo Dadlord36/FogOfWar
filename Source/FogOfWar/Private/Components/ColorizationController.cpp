@@ -35,8 +35,6 @@ void UColorizationController::ApplyColorToOwnerMesh_Implementation(const FLinear
 	const FVector ColorAsVector(InColor);
 	//Get mesh material and set it's color value
 	OwnerMeshComponent->SetVectorParameterValueOnMaterials(ColorParameterName, ColorAsVector);
-
-
 }
 
 // Called when the game starts

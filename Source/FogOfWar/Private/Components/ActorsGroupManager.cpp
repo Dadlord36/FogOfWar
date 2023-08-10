@@ -3,6 +3,7 @@
 
 #include "Components/ActorsGroupManager.h"
 
+#include "Actors/BattleUnit.h"
 #include "Components/ColorizationController.h"
 
 
@@ -14,6 +15,7 @@ UActorsGroupManager::UActorsGroupManager()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
+	SetIsReplicatedByDefault(false);
 }
 
 void UActorsGroupManager::SetGroupActors(const TArray<TObjectPtr<AActor>>& Actors)
@@ -24,7 +26,7 @@ void UActorsGroupManager::SetGroupActors(const TArray<TObjectPtr<AActor>>& Actor
 
 void UActorsGroupManager::ClearSpawnedActors()
 {
-	if(SpawnedActors.IsEmpty())
+	if (SpawnedActors.IsEmpty())
 	{
 		//Remove and destroy all attached actors from owner transform
 		auto Owner = GetOwner();
@@ -36,7 +38,7 @@ void UActorsGroupManager::ClearSpawnedActors()
 		});
 		return;
 	}
-	
+
 	for (const auto& SpawnedActor : SpawnedActors)
 	{
 		if (SpawnedActor)
@@ -58,10 +60,17 @@ void UActorsGroupManager::ApplyColorToGroup() const
 	{
 		if (SpawnedActor)
 		{
-			if (const auto ColorizationController = SpawnedActor->FindComponentByClass<UColorizationController>())
+			const auto BattleUnit = Cast<ABattleUnit>(SpawnedActor);
+			if (BattleUnit == nullptr)
+			{
+				return;
+			}
+
+			BattleUnit->ApplyColorToOwnerMesh(GroupColor);
+			/*if (const auto ColorizationController = SpawnedActor->FindComponentByClass<UColorizationController>())
 			{
 				ColorizationController->ApplyColorToOwnerMesh(GroupColor);
-			}
+			}*/
 		}
 	}
 }

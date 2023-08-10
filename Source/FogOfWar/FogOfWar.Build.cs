@@ -14,13 +14,13 @@ public class FogOfWar : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"DiscoverableActors",
-			"DiscoverableActors_Server",
 			"GameplayMessageRuntime",
-			"ModularGameplay"
+			"ModularGameplay",
+			"DiscoverableActorsRepGraph_Server",
+			"FogOfWarCommon"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { });
+		PrivateDependencyModuleNames.AddRange(new string[] { "ReplicationGraph" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

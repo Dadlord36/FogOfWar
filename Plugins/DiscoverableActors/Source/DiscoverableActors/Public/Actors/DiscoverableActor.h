@@ -7,10 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "DiscoverableActor.generated.h"
 
-#if WITH_SERVER_CODE
 class IUnitIDManager;
 class INetRelevancyDecider;
-#endif
 
 /**
  *  Base class for discoverable actors. It will be replicated to clients only if it is visible for them. Relay on teaming system.

@@ -14,7 +14,7 @@ public class DiscoverableActors_Server : ModuleRules
             {
                 "Core",
                 "DiscoverableActors_Shared",
-                "GameplayMessageRuntime"
+                "GameplayMessageRuntime",
             }
         );
 
@@ -25,7 +25,7 @@ public class DiscoverableActors_Server : ModuleRules
                 "Engine",
                 "Slate",
                 "SlateCore",
-                "DeveloperSettings",
+                "DeveloperSettings"
             }
         );
     }

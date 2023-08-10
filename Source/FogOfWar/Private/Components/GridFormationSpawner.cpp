@@ -98,9 +98,16 @@ TArray<TObjectPtr<AActor>> UGridFormationSpawner::SpawnActors(const TArray<FVect
 
 	const auto ActorToSpawnClass = ActorToSpawn.LoadSynchronous();
 	const auto World = GetWorld();
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = Owner;
+	SpawnParameters.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	
 	for (const auto& SpawnLocation : SpawnLocations)
 	{
-		const TObjectPtr<AActor> SpawnedActor = World->SpawnActor<AActor>(ActorToSpawnClass, SpawnLocation, FRotator::ZeroRotator);
+		const TObjectPtr<AActor> SpawnedActor = World->SpawnActor<AActor>(ActorToSpawnClass, SpawnLocation, FRotator::ZeroRotator,
+			SpawnParameters);
 		if (!SpawnedActor)
 		{
 			continue;

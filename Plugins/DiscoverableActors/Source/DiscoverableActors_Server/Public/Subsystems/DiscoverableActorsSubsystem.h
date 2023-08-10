@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/Interfaces/NetRelevancyDecider.h"
+#include "Components/Interfaces/UnitIDManager.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "DiscoverableActorsSubsystem.generated.h"
 
 struct FActorDiscoveryRequestData;
-class IUnitIDManager;
-class INetRelevancyDecider;
 class UDiscoverableActorsSystemSettings_Server;
 /**
  *  Subsystem for creating and storing discoverable actors system objects
@@ -21,8 +21,8 @@ class DISCOVERABLEACTORS_SERVER_API UDiscoverableActorsSubsystem : public UGameI
 
 public:
 	static UDiscoverableActorsSubsystem* Get(const TObjectPtr<UObject> WorldContextObject);
-	FORCEINLINE TScriptInterface<INetRelevancyDecider> GetNetRelevancyDecider() const;
-	FORCEINLINE TScriptInterface<IUnitIDManager> GetUnitIDManager() const;
+	TScriptInterface<INetRelevancyDecider> GetNetRelevancyDecider() const;
+	TScriptInterface<IUnitIDManager> GetUnitIDManager() const;
 	void MakeActorsDiscoverableForPlayer(TArray<TObjectPtr<AActor>>* Array, const APlayerController* PlayerController) const;
 
 protected:

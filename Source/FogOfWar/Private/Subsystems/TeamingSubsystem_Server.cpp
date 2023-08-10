@@ -4,7 +4,7 @@
 #include "Subsystems/TeamingSubsystem_Server.h"
 
 #include "FogOfWarLogCategoires.h"
-#include "Subsystems/DiscoverableActorsSubsystem.h"
+// #include "Subsystems/DiscoverableActorsSubsystem.h"
 
 void UTeamingSubsystem_Server::RegisterActorsToNextTeam(const TArray<AActor*> Actors)
 {
@@ -27,11 +27,11 @@ void UTeamingSubsystem_Server::MakeBeTeamMateForNextTeam(APlayerController* Play
 
 void UTeamingSubsystem_Server::MakeBeTeamMateFor(APlayerController* PlayerController, const int Team)
 {
-	const auto DiscoverableActorsSubsystem = UDiscoverableActorsSubsystem::Get(this);
+	/*const auto DiscoverableActorsSubsystem = UDiscoverableActorsSubsystem::Get(this);
 	if (ensureAlwaysMsgf(DiscoverableActorsSubsystem, TEXT("DiscoverableActorsSubsystem is nullptr")) == false) return;
 	TArray<TObjectPtr<AActor>>* ActorsPtr = TeamToActorsMap.Find(Team);
 	if(ensureAlwaysMsgf(ActorsPtr, TEXT("ActorsPtr is nullptr")) == false) return;
-	DiscoverableActorsSubsystem->MakeActorsDiscoverableForPlayer(ActorsPtr, PlayerController);
+	DiscoverableActorsSubsystem->MakeActorsDiscoverableForPlayer(ActorsPtr, PlayerController);*/
 }
 
 bool UTeamingSubsystem_Server::ShouldCreateSubsystem(UObject* Outer) const

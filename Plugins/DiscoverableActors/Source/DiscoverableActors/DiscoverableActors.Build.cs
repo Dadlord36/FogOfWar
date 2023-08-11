@@ -36,7 +36,6 @@ public class DiscoverableActors : ModuleRules
 			{
 				"Core",
 				"DeveloperSettings",
-				"DiscoverableActors_Client",
 				"DiscoverableActors_Server",
 				"DiscoverableActors_Shared"
 			}

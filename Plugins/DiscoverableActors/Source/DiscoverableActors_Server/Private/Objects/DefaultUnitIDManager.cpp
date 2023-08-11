@@ -3,11 +3,11 @@
 #include "Objects/DefaultUnitIDManager.h"
 
 
-int32 UDefaultUnitIDManager::AssignUnitID()
+uint32 UDefaultUnitIDManager::AssignUnitID()
 {
 	if (AvailableUnitIDs.Num() > 0)
 	{
-		const int32 UnitID = *AvailableUnitIDs.CreateConstIterator();
+		const uint32 UnitID = *AvailableUnitIDs.CreateConstIterator();
 		AvailableUnitIDs.Remove(UnitID);
 		return UnitID;
 	}
@@ -17,19 +17,19 @@ int32 UDefaultUnitIDManager::AssignUnitID()
 	}
 }
 
-void UDefaultUnitIDManager::ReleaseUnitID(const int32 UnitID)
+void UDefaultUnitIDManager::ReleaseUnitID(const uint32 UnitID)
 {
 	AvailableUnitIDs.Add(UnitID);
 	UnitVisibilityMap.Remove(UnitID); // Clean up the visibility map entry for this unit
 }
 
-void UDefaultUnitIDManager::UpdateVisibilityForPlayer(const int32 UnitID, const int32 PlayerID, const bool bIsVisible)
+void UDefaultUnitIDManager::UpdateVisibilityForPlayer(const uint32 UnitID, const uint32 PlayerID, const bool bIsVisible)
 {
 	if (bIsVisible)
 	{
 		if (!UnitVisibilityMap.Contains(UnitID))
 		{
-			UnitVisibilityMap.Add(UnitID, TArray<int32>());
+			UnitVisibilityMap.Add(UnitID, TArray<uint32>());
 		}
 		UnitVisibilityMap[UnitID].AddUnique(PlayerID);
 	}
@@ -42,7 +42,7 @@ void UDefaultUnitIDManager::UpdateVisibilityForPlayer(const int32 UnitID, const 
 	}
 }
 
-bool UDefaultUnitIDManager::IsUnitRelevantForPlayer(const int32 UnitID, const int32 PlayerID) const
+bool UDefaultUnitIDManager::IsUnitRelevantForPlayer(const uint32 UnitID, const uint32 PlayerID) const
 {
 	if (UnitVisibilityMap.Contains(UnitID))
 	{

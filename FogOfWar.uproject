@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.2",
+	"EngineAssociation": "{540424E6-483B-ED5A-55E4-59803F562BC8}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -28,12 +28,12 @@
 			]
 		},
 		{
-			"Name" : "GameplayMessages",
-			"Enabled" : true
+			"Name": "GameplayMessages",
+			"Enabled": true
 		},
 		{
-			"Name" : "ModularGameplay",
-			"Enabled" : true
+			"Name": "ModularGameplay",
+			"Enabled": true
 		}
 	]
 }

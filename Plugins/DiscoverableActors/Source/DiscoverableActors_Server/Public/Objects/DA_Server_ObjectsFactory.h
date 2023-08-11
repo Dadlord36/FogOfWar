@@ -17,7 +17,7 @@ class DISCOVERABLEACTORS_SERVER_API UDA_Server_ObjectsFactory : public UBlueprin
 
 public:
 	/**
-	 * Create UnitIDProvider object
+	 * @brief Create UnitIDProvider object
 	 * @param Owner - owner of the object
 	 * @param UnitIDProviderClass - class of the object.
 	 * @return UnitIDProvider object

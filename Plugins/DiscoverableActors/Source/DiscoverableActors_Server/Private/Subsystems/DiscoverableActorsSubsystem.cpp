@@ -16,9 +16,9 @@
 UDiscoverableActorsSubsystem* UDiscoverableActorsSubsystem::Get(const TObjectPtr<UObject> WorldContextObject)
 {
 	checkf(WorldContextObject, TEXT("Invalid world context object"));
-	const auto GameInstance = WorldContextObject->GetWorld()->GetGameInstance();
-	checkf(GameInstance, TEXT("Invalid game instance"));
-	const auto Subsystem = GameInstance->GetSubsystem<UDiscoverableActorsSubsystem>();
+	const auto World = WorldContextObject->GetWorld();
+	checkf(World, TEXT("Invalid world"));
+	const auto Subsystem = World->GetSubsystem<UDiscoverableActorsSubsystem>();
 	checkf(Subsystem, TEXT("Invalid discoverable actors subsystem"));
 	return Subsystem;
 }
@@ -35,36 +35,40 @@ void UDiscoverableActorsSubsystem::Initialize(FSubsystemCollectionBase& Collecti
 	Super::Initialize(Collection);
 
 	const auto Settings = GetDiscoverableActorsSystemSettings();
-	
+
 	UnitIDManager = UDA_Server_ObjectsFactory::CreateUnitIDProvider(
 		this, Settings->UnitIDManagerClass);
 	NetRelevancyDecider = UDA_ComponentsFactory::CreateNetRelevancyDecider(
 		this, Settings->NetRelevancyDeciderClass, UnitIDManager);
 
-	StartListeningForActorsDiscoverRequests();
+	// StartListeningForActorsDiscoverRequests();
 }
 
 void UDiscoverableActorsSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
-	StopListeningForActorsDiscoverRequests();
+	// StopListeningForActorsDiscoverRequests();
 }
 
 void UDiscoverableActorsSubsystem::StartListeningForActorsDiscoverRequests()
 {
-	auto& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
-	ActorsDiscoveryListenerHandle = MessageSubsystem.RegisterListener<FActorDiscoveryRequestData>(Channels_ActorsControl_ActorsDiscovery,
+	auto& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
+	ActorsDiscoveryListenerHandle = MessageSubsystem.RegisterListener<FActorDiscoveryRequestData>(TAG_ActorsDiscovery_ShowupForPlayer,
 	                                                                                              this,
-	                                                                                              &UDiscoverableActorsSubsystem::OnActorDiscoverRequest);
+	                                                                                              &UDiscoverableActorsSubsystem::OnActorsDiscoverRequest);
+	ActorsHidingListenerHandle = MessageSubsystem.RegisterListener<FActorDiscoveryRequestData>(TAG_ActorsDiscovery_HideForPlayer,
+	                                                                                           this,
+	                                                                                           &UDiscoverableActorsSubsystem::OnActorsHidingRequest);
 }
 
 void UDiscoverableActorsSubsystem::StopListeningForActorsDiscoverRequests() const
 {
 	auto& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
 	MessageSubsystem.UnregisterListener(ActorsDiscoveryListenerHandle);
+	MessageSubsystem.UnregisterListener(ActorsHidingListenerHandle);
 }
 
-void UDiscoverableActorsSubsystem::OnActorDiscoverRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
+void UDiscoverableActorsSubsystem::OnActorsDiscoverRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
 {
 	if (ActorDiscoveryRequestData.IsDataValid() == false)
 	{
@@ -72,18 +76,44 @@ void UDiscoverableActorsSubsystem::OnActorDiscoverRequest(FGameplayTag, const FA
 		return;
 	}
 
-	const IUnitIdProvider* UnitIDProvider(ActorDiscoveryRequestData.ActorToMakeDiscoverable);
-	if (ensureAlwaysMsgf(UnitIDProvider, TEXT("Actor %s is not implementing IUnitIdProvider"),
-	                     *ActorDiscoveryRequestData.ActorToMakeDiscoverable->GetName()))
+	auto& ActorsToAlterVisibility = ActorDiscoveryRequestData.ActorsToAlterVisibility;
+
+	for (auto& Actor : ActorsToAlterVisibility)
 	{
-		UE_LOG(LogDiscoverableActors, Warning, TEXT("Actor %s is not implementing IUnitIdProvider"),
-		       *ActorDiscoveryRequestData.ActorToMakeDiscoverable->GetName());
+		const IUnitIdProvider* UnitIDProvider = Cast<IUnitIdProvider>(Actor);
+		if (UnitIDProvider == nullptr)
+		{
+			UE_LOG(LogDiscoverableActors, Warning, TEXT("Actor is nullptr"));
+			continue;
+		}
+
+		UnitIDManager->UpdateVisibilityForPlayer(UnitIDProvider->GetUnitID(),
+		                                         ActorDiscoveryRequestData.PlayerController->GetUniqueID(), true);
+	}
+}
+
+void UDiscoverableActorsSubsystem::OnActorsHidingRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
+{
+	if (ActorDiscoveryRequestData.IsDataValid() == false)
+	{
+		UE_LOG(LogDiscoverableActors, Warning, TEXT("Actor discovery request data is invalid"));
 		return;
 	}
 
-	const auto UnitID = UnitIDProvider->GetUnitID();
-	const auto PlayerControllerID = ActorDiscoveryRequestData.PlayerController->GetUniqueID();
-	UnitIDManager->UpdateVisibilityForPlayer(UnitID, PlayerControllerID, true);
+	auto& ActorsToAlterVisibility = ActorDiscoveryRequestData.ActorsToAlterVisibility;
+
+	for (auto& Actor : ActorsToAlterVisibility)
+	{
+		const IUnitIdProvider* UnitIDProvider = Cast<IUnitIdProvider>(Actor);
+		if (UnitIDProvider == nullptr)
+		{
+			UE_LOG(LogDiscoverableActors, Warning, TEXT("Actor is nullptr"));
+			continue;
+		}
+
+		UnitIDManager->UpdateVisibilityForPlayer(UnitIDProvider->GetUnitID(),
+		                                         ActorDiscoveryRequestData.PlayerController->GetUniqueID(), false);
+	}
 }
 
 TScriptInterface<INetRelevancyDecider> UDiscoverableActorsSubsystem::GetNetRelevancyDecider() const
@@ -96,11 +126,11 @@ TScriptInterface<IUnitIDManager> UDiscoverableActorsSubsystem::GetUnitIDManager(
 	return UnitIDManager;
 }
 
-void UDiscoverableActorsSubsystem::MakeActorsDiscoverableForPlayer(TArray<TObjectPtr<AActor>>* Array, const APlayerController* PlayerController) const
+void UDiscoverableActorsSubsystem::MakeActorsReplicatedForPlayer(const TArray<AActor*>& Array, const APlayerController* PlayerController) const
 {
-	if (Array == nullptr)
+	if (Array.IsEmpty())
 	{
-		UE_LOG(LogDiscoverableActors, Warning, TEXT("Array is nullptr"));
+		UE_LOG(LogDiscoverableActors, Warning, TEXT("Array is empty"));
 		return;
 	}
 
@@ -110,16 +140,44 @@ void UDiscoverableActorsSubsystem::MakeActorsDiscoverableForPlayer(TArray<TObjec
 		return;
 	}
 
-	for (auto& Actor : *Array)
+	for (auto& Actor : Array)
 	{
 		const IUnitIdProvider* UnitIDProvider = Cast<IUnitIdProvider>(Actor);
 		if (UnitIDProvider == nullptr)
 		{
-			UE_LOG(LogDiscoverableActors, Warning, TEXT("Actor is nullptr"));
+			UE_LOG(LogDiscoverableActors, Warning, TEXT("UnitIDProvider is nullptr"));
 			continue;
 		}
 
 		UnitIDManager->UpdateVisibilityForPlayer(UnitIDProvider->GetUnitID(), PlayerController->GetUniqueID(), true);
+	}
+}
+
+void UDiscoverableActorsSubsystem::MakeActorsNotReplicatedForPlayer(const TArray<AActor*>& Array,
+                                                                    const APlayerController* PlayerController) const
+{
+	if (Array.IsEmpty())
+	{
+		UE_LOG(LogDiscoverableActors, Warning, TEXT("Array is empty"));
+		return;
+	}
+
+	if (PlayerController == nullptr)
+	{
+		UE_LOG(LogDiscoverableActors, Warning, TEXT("Player controller is nullptr"));
+		return;
+	}
+
+	for (auto& Actor : Array)
+	{
+		const IUnitIdProvider* UnitIDProvider = Cast<IUnitIdProvider>(Actor);
+		if (UnitIDProvider == nullptr)
+		{
+			UE_LOG(LogDiscoverableActors, Warning, TEXT("UnitIDProvider is nullptr"));
+			continue;
+		}
+
+		UnitIDManager->UpdateVisibilityForPlayer(UnitIDProvider->GetUnitID(), PlayerController->GetUniqueID(), false);
 	}
 }
 

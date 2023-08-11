@@ -22,11 +22,11 @@ class DISCOVERABLEACTORS_SERVER_API IUnitIDManager
 
 public:
 	// Assign a unique ID to a unit and return it
-	virtual int32 AssignUnitID() = 0;
+	virtual uint32 AssignUnitID() = 0;
 	// Release a unit's ID when it's destroyed
-	virtual void ReleaseUnitID(const int32 UnitID) = 0;
+	virtual void ReleaseUnitID(const uint32 UnitID) = 0;
 	// Update the visibility of a unit for a player
-	virtual void UpdateVisibilityForPlayer(const int32 UnitID, const int32 PlayerID, const bool bIsVisible) = 0;
+	virtual void UpdateVisibilityForPlayer(const uint32 UnitID, const uint32 PlayerID, const bool bIsVisible) = 0;
 	// Check if a unit is relevant for a given player
-	virtual bool IsUnitRelevantForPlayer(const int32 UnitID, const int32 PlayerID) const = 0;
+	virtual bool IsUnitRelevantForPlayer(const uint32 UnitID, const uint32 PlayerID) const = 0;
 };

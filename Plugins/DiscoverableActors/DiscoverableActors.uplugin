@@ -25,11 +25,6 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "DiscoverableActors_Client",
-      "Type": "ClientOnly",
-      "LoadingPhase": "Default"
-    },
-    {
       "Name": "DiscoverableActors_Shared",
       "Type": "Runtime",
       "LoadingPhase": "Default"

@@ -15,16 +15,11 @@ UActorsVisibilityController::UActorsVisibilityController(const FObjectInitialize
 	SetIsReplicatedByDefault(true);
 }
 
-void UActorsVisibilityController::MakeActorDiscoverableForOwningPlayer(AActor* Actor)
+void UActorsVisibilityController::MakeActorsDiscoverableForOwningPlayer(const TArray<AActor*>& Actors) const
 {
-	if (!Actor)
-	{
-		UE_LOG(LogDiscoverableActors, Warning, TEXT("Actor is nullptr"));
-		return;
-	}
-
-	Server_BroadcastMakeActorDiscoverableRequest(Actor, GetControllerChecked<APlayerController>());
+	Server_BroadcastMakeActorsDiscoverableRequest(Actors, GetControllerChecked<APlayerController>());
 }
+
 
 // Called when the game starts
 void UActorsVisibilityController::BeginPlay()
@@ -34,9 +29,10 @@ void UActorsVisibilityController::BeginPlay()
 	// ...
 }
 
-void UActorsVisibilityController::Server_BroadcastMakeActorDiscoverableRequest_Implementation(AActor* Actor, APlayerController* PlayerController)
+void UActorsVisibilityController::Server_BroadcastMakeActorsDiscoverableRequest_Implementation(const TArray<AActor*>& Actors,
+                                                                                               APlayerController* PlayerController) const 
 {
 	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
-	MessageSubsystem.BroadcastMessage<FActorDiscoveryRequestData>(Channels_ActorsControl_ActorsDiscovery,
-	                                                              FActorDiscoveryRequestData(PlayerController, Actor));
+	MessageSubsystem.BroadcastMessage<FActorDiscoveryRequestData>(TAG_ActorsDiscovery_ShowupForPlayer,
+	                                                              FActorDiscoveryRequestData(PlayerController, Actors));
 }

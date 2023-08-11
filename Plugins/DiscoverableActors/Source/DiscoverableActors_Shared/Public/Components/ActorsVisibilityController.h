@@ -16,7 +16,8 @@ class DISCOVERABLEACTORS_SHARED_API UActorsVisibilityController : public UContro
 public:
 	UActorsVisibilityController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	void MakeActorDiscoverableForOwningPlayer(AActor* Actor);
+	UFUNCTION(BlueprintCallable, Category = "ActorsVisibilityController")
+	void MakeActorsDiscoverableForOwningPlayer(const TArray<AActor*>& Actors) const;
 
 protected:
 	// Called when the game starts
@@ -24,5 +25,5 @@ protected:
 
 private:
 	UFUNCTION(Server, Reliable)
-	void Server_BroadcastMakeActorDiscoverableRequest(AActor* Actor, APlayerController* PlayerController);
+	void Server_BroadcastMakeActorsDiscoverableRequest(const TArray<AActor*>& Actors, APlayerController* PlayerController) const;
 };

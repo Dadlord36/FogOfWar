@@ -8,7 +8,8 @@
 #include "ActorDiscoveryRequestData.generated.h"
 
 //Declare tag for messaging channel
-DISCOVERABLEACTORS_SHARED_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Channels_ActorsControl_ActorsDiscovery);
+DISCOVERABLEACTORS_SHARED_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_ActorsDiscovery_ShowupForPlayer);
+DISCOVERABLEACTORS_SHARED_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_ActorsDiscovery_HideForPlayer);
 
 /**
  *  Struct that contains data for actor discovery request
@@ -21,21 +22,20 @@ struct DISCOVERABLEACTORS_SHARED_API FActorDiscoveryRequestData
 public:
 	FActorDiscoveryRequestData() = default;
 
-	FActorDiscoveryRequestData(const TObjectPtr<APlayerController>& PlayerController, const TObjectPtr<AActor>& ActorToMakeDiscoverable)
+	FActorDiscoveryRequestData(const TObjectPtr<APlayerController>& PlayerController, const TArray<AActor*>& ActorToMakeDiscoverable)
 		: PlayerController(PlayerController),
-		  ActorToMakeDiscoverable(ActorToMakeDiscoverable)
+		  ActorsToAlterVisibility(ActorToMakeDiscoverable)
 	{
 	}
 
 	bool IsDataValid() const
 	{
-		return ensureAlwaysMsgf(ActorToMakeDiscoverable != nullptr || PlayerController != nullptr,
-		                        TEXT("Invalid actor discovery request data"));
+		return ensureAlwaysMsgf(PlayerController != nullptr, TEXT("Invalid actor discovery request data"));
 	}
 
 public:
 	UPROPERTY(Transient)
 	TObjectPtr<APlayerController> PlayerController;
 	UPROPERTY(Transient)
-	TObjectPtr<AActor> ActorToMakeDiscoverable;
+	TArray<TObjectPtr<AActor>> ActorsToAlterVisibility;
 };

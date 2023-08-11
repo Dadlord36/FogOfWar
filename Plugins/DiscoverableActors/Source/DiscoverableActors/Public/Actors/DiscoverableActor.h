@@ -24,10 +24,12 @@ class DISCOVERABLEACTORS_API ADiscoverableActor : public AActor, public IUnitIdP
 public:
 	ADiscoverableActor();
 
+#pragma region IUnitIdProvider
+	virtual uint32 GetUnitID() const override { return UnitID; }
+#pragma endregion IUnitIdProvider
+
 #if WITH_SERVER_CODE
 	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
-
-	virtual int GetUnitID() const override { return UnitID; }
 	void SetFallbackToDefaultRelevancy(const bool bInFallbackToDefaultRelevancy) { bFallbackToDefaultRelevancy = bInFallbackToDefaultRelevancy; }
 #endif
 
@@ -43,13 +45,16 @@ private:
 	void ReleaseUnitID() const;
 #endif
 
-private:
-#if WITH_SERVER_CODE
 #pragma region Fileds
+
+private:
+	uint32 UnitID = -1;
+
+#if WITH_SERVER_CODE
 	int32 bFallbackToDefaultRelevancy = 0;
-	int UnitID = -1;
 	TScriptInterface<INetRelevancyDecider> NetRelevancyDecider;
 	TScriptInterface<IUnitIDManager> UnitIDManager;
-#pragma endregion
 #endif
+
+#pragma endregion
 };

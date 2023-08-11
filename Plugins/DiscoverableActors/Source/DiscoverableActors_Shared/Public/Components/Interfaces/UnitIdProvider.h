@@ -21,5 +21,5 @@ class DISCOVERABLEACTORS_SHARED_API IUnitIdProvider
 	GENERATED_BODY()
 
 public:
-	virtual int GetUnitID() const = 0;
+	virtual uint32 GetUnitID() const = 0;
 };

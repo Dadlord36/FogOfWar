@@ -8,7 +8,7 @@
 #include "DefaultUnitIDManager.generated.h"
 
 /**
- * 
+ *  Default implementation of the unit ID manager that is mapping unit IDs to player IDs for visibility tracking
  */
 UCLASS(BlueprintType)
 class DISCOVERABLEACTORS_SERVER_API UDefaultUnitIDManager : public UObject, public IUnitIDManager
@@ -17,24 +17,24 @@ class DISCOVERABLEACTORS_SERVER_API UDefaultUnitIDManager : public UObject, publ
 
 public:
 	// Assign a unique ID to a unit and return it
-	virtual int32 AssignUnitID() override;
+	virtual uint32 AssignUnitID() override;
 
 	// Release a unit's ID when it's destroyed
-	virtual void ReleaseUnitID(const int32 UnitID) override;
+	virtual void ReleaseUnitID(const uint32 UnitID) override;
 
 	// Update the visibility of a unit for a player
-	virtual void UpdateVisibilityForPlayer(const int32 UnitID, const int32 PlayerID, const bool bIsVisible) override;
+	virtual void UpdateVisibilityForPlayer(const uint32 UnitID, const uint32 PlayerID, const bool bIsVisible) override;
 
 	// Check if a unit is relevant for a given player
-	virtual bool IsUnitRelevantForPlayer(const int32 UnitID, const int32 PlayerID) const override;
+	virtual bool IsUnitRelevantForPlayer(const uint32 UnitID, const uint32 PlayerID) const override;
 
 private:
 	// Track the next available unit ID
-	int32 NextAvailableUnitID = 1;
+	uint32 NextAvailableUnitID = 1;
 
 	// Store released IDs for reuse
-	TSet<int32> AvailableUnitIDs;
+	TSet<uint32> AvailableUnitIDs;
 
 	// Map of unit IDs to arrays of player IDs for visibility tracking
-	TMap<int32, TArray<int32>> UnitVisibilityMap;
+	TMap<uint32, TArray<uint32>> UnitVisibilityMap;
 };

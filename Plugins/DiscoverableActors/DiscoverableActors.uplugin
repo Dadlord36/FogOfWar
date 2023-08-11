@@ -17,12 +17,19 @@
     {
       "Name": "DiscoverableActors",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "DiscoverableActors_Shared",
+        "DiscoverableActors_Server"
+      ]
     },
     {
       "Name": "DiscoverableActors_Server",
       "Type": "ServerOnly",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "DiscoverableActors_Shared"
+      ]
     },
     {
       "Name": "DiscoverableActors_Shared",

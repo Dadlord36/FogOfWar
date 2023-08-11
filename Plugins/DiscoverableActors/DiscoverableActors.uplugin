@@ -34,10 +34,6 @@
     {
       "Name": "ModularGameplay",
       "Enabled": true
-    },
-    {
-      "Name": "GameplayMessages",
-      "Enabled": true
     }
   ]
 }

@@ -11,8 +11,7 @@ public class DiscoverableActors_Shared : ModuleRules
 			{
 				"Core",
 				"GameplayTags",
-				"ModularGameplay",
-				"GameplayMessageRuntime"
+				"ModularGameplay"
 			}
 		);
 

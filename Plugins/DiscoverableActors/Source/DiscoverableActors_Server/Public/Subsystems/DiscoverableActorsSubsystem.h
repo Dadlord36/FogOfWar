@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameplayMessageSubsystem.h"
+// #include "GameFramework/GameplayMessageSubsystem.h"
+#include "GameplayTagContainer.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "DiscoverableActorsSubsystem.generated.h"
 
@@ -45,11 +46,11 @@ protected:
 	virtual void Deinitialize() override;
 
 private:
-	void StartListeningForActorsDiscoverRequests();
-	void StopListeningForActorsDiscoverRequests() const;
+	/*void StartListeningForActorsDiscoverRequests();
+	void StopListeningForActorsDiscoverRequests() const;*/
 
-	void OnActorsDiscoverRequest(FGameplayTag GameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData);
-	void OnActorsHidingRequest(FGameplayTag GameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData);
+	/*void OnActorsDiscoverRequest(FGameplayTag GameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData);
+	void OnActorsHidingRequest(FGameplayTag GameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData);*/
 	
 	static TObjectPtr<const UDiscoverableActorsSystemSettings_Server> GetDiscoverableActorsSystemSettings();
 
@@ -59,6 +60,6 @@ private:
 	UPROPERTY(Transient)
 	TScriptInterface<IUnitIDManager> UnitIDManager;
 
-	FGameplayMessageListenerHandle ActorsDiscoveryListenerHandle;
-	FGameplayMessageListenerHandle ActorsHidingListenerHandle;
+	/*FGameplayMessageListenerHandle ActorsDiscoveryListenerHandle;
+	FGameplayMessageListenerHandle ActorsHidingListenerHandle;*/
 };

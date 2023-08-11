@@ -16,7 +16,7 @@ public class FogOfWar : ModuleRules
 			"InputCore",
 			"DiscoverableActors",
 			"DiscoverableActors_Server",
-			"GameplayMessageRuntime",
+			//"GameplayMessageRuntime",
 			"ModularGameplay"
 		});
 

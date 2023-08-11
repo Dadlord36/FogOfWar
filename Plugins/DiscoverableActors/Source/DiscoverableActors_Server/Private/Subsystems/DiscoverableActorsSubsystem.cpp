@@ -3,15 +3,16 @@
 
 #include "Subsystems/DiscoverableActorsSubsystem.h"
 
+// #include "GameFramework/GameplayMessageSubsystem.h"
+// #include "Structs/ActorDiscoveryRequestData.h"
 #include "LogCategoires.h"
 #include "Components/Factories/DA_ComponentsFactory.h"
 #include "Components/Interfaces/NetRelevancyDecider.h"
 #include "Components/Interfaces/UnitIDManager.h"
 #include "Components/Interfaces/UnitIdProvider.h"
-#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Objects/DA_Server_ObjectsFactory.h"
 #include "Settings/DiscoverableActorsSystemSettings.h"
-#include "Structs/ActorDiscoveryRequestData.h"
+
 
 UDiscoverableActorsSubsystem* UDiscoverableActorsSubsystem::Get(const TObjectPtr<UObject> WorldContextObject)
 {
@@ -50,7 +51,7 @@ void UDiscoverableActorsSubsystem::Deinitialize()
 	// StopListeningForActorsDiscoverRequests();
 }
 
-void UDiscoverableActorsSubsystem::StartListeningForActorsDiscoverRequests()
+/*void UDiscoverableActorsSubsystem::StartListeningForActorsDiscoverRequests()
 {
 	auto& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
 	ActorsDiscoveryListenerHandle = MessageSubsystem.RegisterListener<FActorDiscoveryRequestData>(TAG_ActorsDiscovery_ShowupForPlayer,
@@ -59,16 +60,16 @@ void UDiscoverableActorsSubsystem::StartListeningForActorsDiscoverRequests()
 	ActorsHidingListenerHandle = MessageSubsystem.RegisterListener<FActorDiscoveryRequestData>(TAG_ActorsDiscovery_HideForPlayer,
 	                                                                                           this,
 	                                                                                           &UDiscoverableActorsSubsystem::OnActorsHidingRequest);
-}
+}*/
 
-void UDiscoverableActorsSubsystem::StopListeningForActorsDiscoverRequests() const
+/*void UDiscoverableActorsSubsystem::StopListeningForActorsDiscoverRequests() const
 {
 	auto& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
 	MessageSubsystem.UnregisterListener(ActorsDiscoveryListenerHandle);
 	MessageSubsystem.UnregisterListener(ActorsHidingListenerHandle);
-}
+}*/
 
-void UDiscoverableActorsSubsystem::OnActorsDiscoverRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
+/*void UDiscoverableActorsSubsystem::OnActorsDiscoverRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
 {
 	if (ActorDiscoveryRequestData.IsDataValid() == false)
 	{
@@ -90,9 +91,9 @@ void UDiscoverableActorsSubsystem::OnActorsDiscoverRequest(FGameplayTag, const F
 		UnitIDManager->UpdateVisibilityForPlayer(UnitIDProvider->GetUnitID(),
 		                                         ActorDiscoveryRequestData.PlayerController->GetUniqueID(), true);
 	}
-}
+}*/
 
-void UDiscoverableActorsSubsystem::OnActorsHidingRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
+/*void UDiscoverableActorsSubsystem::OnActorsHidingRequest(FGameplayTag, const FActorDiscoveryRequestData& ActorDiscoveryRequestData)
 {
 	if (ActorDiscoveryRequestData.IsDataValid() == false)
 	{
@@ -114,7 +115,7 @@ void UDiscoverableActorsSubsystem::OnActorsHidingRequest(FGameplayTag, const FAc
 		UnitIDManager->UpdateVisibilityForPlayer(UnitIDProvider->GetUnitID(),
 		                                         ActorDiscoveryRequestData.PlayerController->GetUniqueID(), false);
 	}
-}
+}*/
 
 TScriptInterface<INetRelevancyDecider> UDiscoverableActorsSubsystem::GetNetRelevancyDecider() const
 {

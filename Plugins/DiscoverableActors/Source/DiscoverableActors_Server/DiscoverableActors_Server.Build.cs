@@ -13,8 +13,7 @@ public class DiscoverableActors_Server : ModuleRules
             new string[]
             {
                 "Core",
-                "DiscoverableActors_Shared",
-                "GameplayMessageRuntime"
+                "DiscoverableActors_Shared"
             }
         );
 
